@@ -1,0 +1,7 @@
+How does transfer learning improve model performance?
+
+What is the role of feature engineering in ML models?
+
+What are some real-world applications of reinforcement learning?
+
+What is the capital of Sri Lanka?

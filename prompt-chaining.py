@@ -130,6 +130,10 @@ def execute_prompt_chain_workflow():
             console.print(Panel.fit(agent_response["ai_answer"], border_style="bright_green", title="🧠 ML Expert Response"))
         else:
             console.print(Panel.fit("[bold red]🚫 The query is not related to Machine Learning topics.[/bold red]", border_style="red"))
+
+if __name__ == "__main__":
+    execute_prompt_chain_workflow()
+            
    
         
     

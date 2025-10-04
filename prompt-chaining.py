@@ -6,9 +6,16 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langgraph.graph import START,END,StateGraph
 import os 
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
+from rich.progress import track
+import os
+import time
 
+console = Console()
 load_dotenv()
-GROQ_API_KEY=os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 class AgentState(TypedDict):
     question:str 
@@ -98,23 +105,32 @@ def build_graph():
 # Query 1: "What are the latest advancements in machine learning?"
 # Query 2: "What is the capital of srilanka?"
 
-question = input("ask : ")
 def execute_prompt_chain_workflow():
-    workflow = build_graph()
-    initial_state: AgentState = {
-        "question": question,
-    }
+    console.print(Panel.fit("[bold magenta]✨ Machine Learning Classifier Agent ✨[/bold magenta]", border_style="magenta"))
 
-    agent_response = workflow.invoke(initial_state)
-    #print(agent_response)
+    workflow = build_graph()  # Build once for reuse
 
-    if agent_response['from_ml_topic']:
-        print("AI's Answer:", agent_response['ai_answer'])
-    else:
-        print("The query is not related to machine learning topics.")
-        
-load_dotenv()
-execute_prompt_chain_workflow()        
+    while True:
+        question = console.input("\n[bold cyan]❓ Ask your question (or type 'exit' to quit): [/bold cyan]").strip()
+
+        if question.lower() in ["exit", "quit", "q"]:
+            console.print("\n[bold yellow]👋 Exiting the Machine Learning Classifier Agent. Goodbye![/bold yellow]\n")
+            break
+
+        if not question:
+            console.print("[red]⚠️ Please enter a valid question![/red]")
+            continue
+
+        console.print(Panel.fit(f"[bold white]🧩 Processing your query...[/bold white]", border_style="cyan"))
+        initial_state: AgentState = {"question": question}
+        agent_response = workflow.invoke(initial_state)
+
+        if agent_response.get("from_ml_topic"):
+            console.print("\n[bold green]✅ The query was related to Machine Learning![/bold green]")
+            console.print(Panel.fit(agent_response["ai_answer"], border_style="bright_green", title="🧠 ML Expert Response"))
+        else:
+            console.print(Panel.fit("[bold red]🚫 The query is not related to Machine Learning topics.[/bold red]", border_style="red"))
+   
         
     
     
